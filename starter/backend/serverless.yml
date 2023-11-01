@@ -26,16 +26,6 @@ provider:
     SIGNED_URL_EXPIRATION: 300
     PROJECT_NAME: serverless-todo-app
 
-  iam:
-    role:
-      statements:
-        - Effect: 'Allow'
-          Action:
-            - 'xray:PutTraceSegments'
-            - 'xray:PutTelemetryRecords'
-          Resource:
-            - '*'
-
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -52,10 +42,14 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Query
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
           - dynamodb:Query
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
 
   CreateTodo:
@@ -73,6 +67,8 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:PutItem
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   UpdateTodo:
@@ -90,6 +86,8 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   DeleteTodo:
@@ -104,6 +102,8 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   GenerateUploadUrl:
@@ -119,11 +119,15 @@ functions:
         Action:
           - s3:PutObject
           - s3:GetObject
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENTS_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
           - dynamodb:GetItem
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
 resources:
